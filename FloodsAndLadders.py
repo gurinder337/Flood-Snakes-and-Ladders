@@ -15,7 +15,7 @@ pygame.init()
 pygame.font.init()
 txtFont = pygame.font.SysFont("Candara", 30)                        #fonts used throughout the game
 txtFont2 = pygame.font.SysFont("Candara", 15)
-cFont = pygame.font.SysFont("Candara", 20)
+cFont = pygame.font.SysFont("Candara", 35)
 cFont2 = pygame.font.SysFont("Candara", 60)
 bFont = pygame.font.SysFont("Candara", 100)
 quoteFont = pygame.font.SysFont("Candara", 50)
@@ -37,8 +37,11 @@ cHei = 160          #height of the cards
 border = 2          #size of the border surronding cards, instructions, buttons
 gap = 20            #size of the gap between quotes/pictures and the edges of the window
 
-minRoll = -3        #the minimum and maximum die roll
-maxRoll = 9
+minRoll = -2        #the minimum and maximum die roll
+maxRoll = 5
+minPosRoll = 3      #the minimum required for roll to be considered positive
+newRandCard = True
+cardI = 0
 
 ground = pygame.display.set_mode((windWid, windHei))            #background surface
 bgImg = pygame.image.load("graphics/newBG_v4.png")              #background image
@@ -80,7 +83,7 @@ class Button(Component):            #Class for buttons that appear on the main m
     def __init__(self, id, x, y):
         super().__init__(id, x, y)
         self.txtSurf = txtFont.render("<None>", False, black)
-        print("button: " + str(id) + " alive")
+        #print("button: " + str(id) + " alive")
 
     def drawSelf(self):
         pygame.draw.rect(ground, black,(int(self.x-border), int(self.y-border), cWid+(border*2), cHei+(border*2))) #Draws a rect slighter bigger first (the border)
@@ -118,25 +121,52 @@ class Card(Component):            #Class for cards which determine player moveme
         self.reveal = False
 
     def drawSelf(self, roll = None):
+        global cardI
+        global newRandCard
         txtGap = 10               #gap between text on cards and card edge
+        #print(str(plyrs[turn].tilePos) +" = tile Pos" + str(self.txtCat()) +" = cat")
         if self.reveal:
             fctr = 2              #the factor by which the card should grow when clicked on (i.e. fctr 2 -> wid and hei x2)
             lrgX = self.enlargeCoords(fctr)[0]
             lrgY = self.enlargeCoords(fctr)[1]
             pygame.draw.rect(ground, black, (lrgX, lrgY, cWid*fctr, cHei*fctr)) #border
             self.body = pygame.draw.rect(ground, grey, (lrgX+border*fctr, lrgY+border*fctr, (cWid-(border*2))*fctr, (cHei-(border*2))*fctr))
+
+            preface = "Go forward "          #assumes roll > 0 initially
             if roll < 0:
-                showParagr(negTxt[negTxtI], (lrgX+20, lrgY+20), cFont, (cWid*fctr)-40)
-                size = cFont2.size("Go back " + str(-roll))
-                ground.blit(cFont2.render("Go back " + str(-roll), False, black), (lrgX+(cWid*fctr)-size[0]-txtGap, lrgY+(cHei*fctr)-size[1]-txtGap))
+                if newRandCard: cardI = random.randint(0, len(negTxts[self.txtCat()])-1)
+                txt = negTxts[self.txtCat()][cardI]
+                roll = -roll
+                preface = "Go back "
+                col = red
+            elif roll > 0 and roll < minPosRoll:
+                if newRandCard: cardI = random.randint(0, len(neuTxts[self.txtCat()])-1)
+                txt = neuTxts[self.txtCat()][cardI]
+                col = grey
             else:
-                showParagr(posTxt[posTxtI], (lrgX+20, lrgY+20), cFont, (cWid*fctr)-40)
-                size = cFont2.size("Go forward " + str(roll))
-                ground.blit(cFont2.render("Go forward " + str(roll), False, black), (lrgX+(cWid*fctr)-size[0]-txtGap, lrgY+(cHei*fctr)-size[1]-txtGap))
+                if newRandCard: cardI = random.randint(0, len(posTxts[self.txtCat()])-1)
+                txt = posTxts[self.txtCat()][cardI]
+                col = green
+                
+            newRandCard = False
+            
+            self.body = pygame.draw.rect(ground, col, (lrgX+border*fctr, lrgY+border*fctr, (cWid-(border*2))*fctr, (cHei-(border*2))*fctr))
+            showParagr(txt, (lrgX+20, lrgY+20), cFont, (cWid*fctr)-40)
+            size = cFont2.size(preface + str(roll))
+            ground.blit(cFont2.render(preface + str(roll), False, black), (lrgX+(cWid*fctr)-size[0]-txtGap, lrgY+(cHei*fctr)-size[1]-txtGap))
         else:
             self.body = pygame.draw.rect(ground, grey, (self.x+border, self.y+border, cWid-(border*2), cHei-(border*2)))
             ground.blit(cardBackImg, (self.x, self.y))
 
+    def txtCat(self):
+        pTile = plyrs[turn].tilePos
+        if pTile >= 1 and pTile <= 4: return 0
+        if pTile >= 5 and pTile <= 8: return 1
+        if pTile >= 9 and pTile <= 12: return 2
+        if pTile >= 13 and pTile <= 16: return 3
+        if pTile >= 17 and pTile <= 20: return 4
+        return -1
+        
     def enlargeCoords(self, f = 1):
         if self.y < windHei/2:
             lrgY = 10
@@ -201,7 +231,7 @@ def initTxt(path):              #loads text files into String array and returns 
     txt = []
     for line in file:
         txt.append(line)
-    print(len(txt))
+    #print(len(txt))
     return txt
 
 def initCards():                #initialises cards, places evenly spaced-apart
@@ -317,8 +347,8 @@ def gameLoopUpdate():           #called every iteration while the game is runnin
     clock.tick(30)
     
 def showQuote(tileNum):         #tileNum only used to determine whether or not first square
-    if tileNum == 1: return     #dont show quote on first tile
-    qNum = random.randint(0, len(qAll)-1)
+    if tileNum == 1: qNum = 0     #dont show quote on first tile
+    else: qNum = random.randint(1, len(qAll)-1)
     isImg = qNum > len(qTxt)-1
     viewQuote = True
     sTime = pygame.time.get_ticks()     #takes a start time to work out how long quote has been shown for
@@ -352,12 +382,18 @@ tiles = initTiles()
 cards = initCards()
 instructs = Instructions(50, 50)
 plyrNumOpts = initPlyrNumOpts()
-negTxt = initTxt("txts/negatives.txt")
-negTxtI = random.randint(0, len(negTxt)-1)
+negTxts = []
+for i in range(5):
+    negTxts.append(initTxt("txts/negatives/negatives" + str(i+1) + ".txt"))
 
-posTxt = initTxt("txts/positives.txt")
-posTxtI = random.randint(0, len(posTxt)-1)
+posTxts = []
+for i in range(5):
+    posTxts.append(initTxt("txts/positives/positives" + str(i+1) + ".txt"))
 
+neuTxts = []
+for i in range(5):
+    neuTxts.append(initTxt("txts/neutrals/neutrals" + str(i+1) + ".txt"))
+    
 qTxt = initTxt("txts/quotes.txt")
 print("num of quotes: " + str((len(qTxt))))
 
@@ -408,8 +444,9 @@ while run:           #runs code from top everytime a new game begins (after a pl
             if turn > -1: plyrs[turn].lastPlaced = [plyrs[turn].x, plyrs[turn].y]   #pre-turn maintenance only run if NOT very first turn (-1)
             turn += 1
             if turn >= len(plyrs): turn = 0 #resets turn counter, allows loops around plyrs
-            negTxtI = random.randint(0, len(negTxt)-1)
-            posTxtI = random.randint(0, len(posTxt)-1)
+            newRandCard = True
+            #negTxtI = random.randint(0, len(negTxts[0])-1)
+            #posTxtI = random.randint(0, len(posTxts[0])-1)
             rollDie()
             nextTurn = False
 
