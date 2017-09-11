@@ -15,6 +15,8 @@ pygame.init()
 pygame.font.init()
 txtFont = pygame.font.SysFont("Candara", 30)                        #fonts used throughout the game
 txtFont2 = pygame.font.SysFont("Candara", 15)
+cTFont = pygame.font.SysFont("Candara", 25)
+cTFont.set_bold(True)
 cFont = pygame.font.SysFont("Candara", 35)
 cFont2 = pygame.font.SysFont("Candara", 60)
 bFont = pygame.font.SysFont("Candara", 100)
@@ -38,7 +40,7 @@ border = 2          #size of the border surronding cards, instructions, buttons
 gap = 20            #size of the gap between quotes/pictures and the edges of the window
 
 minRoll = -2        #the minimum and maximum die roll
-maxRoll = 5
+maxRoll = 20
 minPosRoll = 3      #the minimum required for roll to be considered positive
 newRandCard = True
 cardI = 0
@@ -151,7 +153,9 @@ class Card(Component):            #Class for cards which determine player moveme
             newRandCard = False
             
             self.body = pygame.draw.rect(ground, col, (lrgX+border*fctr, lrgY+border*fctr, (cWid-(border*2))*fctr, (cHei-(border*2))*fctr))
-            showParagr(txt, (lrgX+20, lrgY+20), cFont, (cWid*fctr)-40)
+            titleY = showParagr(catTitles[self.txtCat()], (lrgX+20, lrgY+20), cTFont, (cWid*fctr)-40)
+            #print(lrgY)
+            showParagr(txt, (lrgX+20, titleY+10), cFont, (cWid*fctr)-40)
             size = cFont2.size(preface + str(roll))
             ground.blit(cFont2.render(preface + str(roll), False, black), (lrgX+(cWid*fctr)-size[0]-txtGap, lrgY+(cHei*fctr)-size[1]-txtGap))
         else:
@@ -206,6 +210,7 @@ def showParagr(txt, pos, font, widLimit, color=black, alpha=None):  #method for 
             x += wordWid + space
         x = pos[0]
         y += wordHei
+    return y                                                #returns height of paragraph
 
 def swapTiles(array, i1, i2):   #swaps the index of 2 tiles in a given array
     temp = array[i1]
@@ -298,15 +303,15 @@ def evalPlyrMove(plyr):   #evaluates whether the player has moved their avatar t
         ammendCollisions(plyr)
         nextTurn = True                                                 #allows next turn
     else:
-         plyr.x = plyr.lastPlaced[0]
-         plyr.y = plyr.lastPlaced[1]
-         instructs.changeText(sub = "Try again!")
+        plyr.x = plyr.lastPlaced[0]
+        plyr.y = plyr.lastPlaced[1]
+        instructs.changeText(sub = "Try again!")
 
 def ammendCollisions(plyr):     #moves player avatars if 2+ are on the same tile
     global plyrs
     plyr.tilePlac = 1   #reset as they would have just landed therefore Plac = 1
     for p in plyrs:
-        if p.id != plyr.id and p.tilePos == plyr.tilePos and p.tilePlac == plyr.tilePlac:
+        while p.id != plyr.id and p.tilePos == plyr.tilePos and p.tilePlac == plyr.tilePlac:
             if numPlyrs == 4: plyr.x += (avRad*2) - 8   #squashes avatars together more if 4 players (to fit on 1 tile)
             else: plyr.x += (avRad*2) + 5
             plyr.tilePlac += 1            
@@ -347,8 +352,15 @@ def gameLoopUpdate():           #called every iteration while the game is runnin
     clock.tick(30)
     
 def showQuote(tileNum):         #tileNum only used to determine whether or not first square
-    if tileNum == 1: qNum = 0     #dont show quote on first tile
-    else: qNum = random.randint(1, len(qAll)-1)
+    print(tileNum)
+    global firstQuote
+    if firstQuote:
+        print("first")
+        qNum = 0     #dont show quote on first tile
+        firstQuote = False
+    elif tileNum == 20: qNum = 1
+    else: qNum = random.randint(2, len(qAll)-1)
+    print(qNum)
     isImg = qNum > len(qTxt)-1
     viewQuote = True
     sTime = pygame.time.get_ticks()     #takes a start time to work out how long quote has been shown for
@@ -382,6 +394,8 @@ tiles = initTiles()
 cards = initCards()
 instructs = Instructions(50, 50)
 plyrNumOpts = initPlyrNumOpts()
+
+catTitles = initTxt("txts/catTitles.txt")
 negTxts = []
 for i in range(5):
     negTxts.append(initTxt("txts/negatives/negatives" + str(i+1) + ".txt"))
@@ -403,9 +417,9 @@ print("num of imgs: " + str((len(qImgs))))
 qAll = qTxt + qImgs
 print("num in tot: " + str((len(qAll))))
 
+
 run = True
 choosing = False
-
 while run:           #runs code from top everytime a new game begins (after a player wins)
     mainMenu = True
     gameLoop = True
@@ -414,6 +428,7 @@ while run:           #runs code from top everytime a new game begins (after a pl
     avSelected = False
     turn = -1
     nextTurn = True
+    firstQuote = True
     while mainMenu:
 
         instructs.changeText("Welcome to Flood Snakes and Ladders!", "Selected number of players:")
@@ -461,6 +476,7 @@ while run:           #runs code from top everytime a new game begins (after a pl
                 if avSelected: evalPlyrMove(plyrs[turn])    #if plyr lets go, evaluate their move
                 avSelected = False
                 if plyrs[turn].tilePos == 20:
+                    showQuote(plyrs[turn].tilePos)
                     winner = turn+1
                     gameLoop = False
                     timeout = pygame.time.get_ticks()
