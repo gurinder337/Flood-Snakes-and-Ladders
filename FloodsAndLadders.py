@@ -37,17 +37,18 @@ tHei = windHei/tilesVert    #i.e. 120
 cWid = 240          #width of the cards
 cHei = 160          #height of the cards
 border = 2          #size of the border surronding cards, instructions, buttons
-gap = 20            #size of the gap between quotes/pictures and the edges of the window
+picGap = 5          #size of the gap between pictures and the edges of the window
+txtGap = 30
 
 minRoll = -2        #the minimum and maximum die roll
-maxRoll = 20
+maxRoll = 10
 minPosRoll = 3      #the minimum required for roll to be considered positive
 newRandCard = True
 cardI = 0
 
 ground = pygame.display.set_mode((windWid, windHei))            #background surface
-bgImg = pygame.image.load("graphics/newBG_v4.png")              #background image
-mmImg = pygame.image.load("graphics/newBGNoOverlay_v4.png")     #main menu background image
+bgImg = pygame.transform.scale(pygame.image.load("graphics/newBG_v4.png"), (windWid, windHei))              #background image
+mmImg = pygame.transform.scale(pygame.image.load("graphics/newBGNoOverlay_v4.png"), (windWid, windHei))     #main menu background image
 blackImg = pygame.transform.scale(pygame.image.load("graphics/blackBg.png"), (windWid, windHei))    #loads and scales an image of the colour black
 cardBackImg = pygame.transform.scale(pygame.image.load("graphics/cardBack.jpg"), (cWid, cHei))      #loads and scales the card back image
 
@@ -126,7 +127,7 @@ class Card(Component):            #Class for cards which determine player moveme
         global cardI
         global newRandCard
         txtGap = 10               #gap between text on cards and card edge
-        #print(str(plyrs[turn].tilePos) +" = tile Pos" + str(self.txtCat()) +" = cat")
+        #print(str(plyrs[turn].tilePos) +" = tile Pos" + str(tileCat()) +" = cat")
         if self.reveal:
             fctr = 2              #the factor by which the card should grow when clicked on (i.e. fctr 2 -> wid and hei x2)
             lrgX = self.enlargeCoords(fctr)[0]
@@ -136,24 +137,24 @@ class Card(Component):            #Class for cards which determine player moveme
 
             preface = "Go forward "          #assumes roll > 0 initially
             if roll < 0:
-                if newRandCard: cardI = random.randint(0, len(negTxts[self.txtCat()])-1)
-                txt = negTxts[self.txtCat()][cardI]
+                if newRandCard: cardI = random.randint(0, len(negTxts[tileCat()])-1)
+                txt = negTxts[tileCat()][cardI]
                 roll = -roll
                 preface = "Go back "
                 col = red
             elif roll > 0 and roll < minPosRoll:
-                if newRandCard: cardI = random.randint(0, len(neuTxts[self.txtCat()])-1)
-                txt = neuTxts[self.txtCat()][cardI]
+                if newRandCard: cardI = random.randint(0, len(neuTxts[tileCat()])-1)
+                txt = neuTxts[tileCat()][cardI]
                 col = grey
             else:
-                if newRandCard: cardI = random.randint(0, len(posTxts[self.txtCat()])-1)
-                txt = posTxts[self.txtCat()][cardI]
+                if newRandCard: cardI = random.randint(0, len(posTxts[tileCat()])-1)
+                txt = posTxts[tileCat()][cardI]
                 col = green
                 
             newRandCard = False
             
             self.body = pygame.draw.rect(ground, col, (lrgX+border*fctr, lrgY+border*fctr, (cWid-(border*2))*fctr, (cHei-(border*2))*fctr))
-            titleY = showParagr(catTitles[self.txtCat()], (lrgX+20, lrgY+20), cTFont, (cWid*fctr)-40)
+            titleY = showParagr(catTitles[tileCat()], (lrgX+20, lrgY+20), cTFont, (cWid*fctr)-40)
             #print(lrgY)
             showParagr(txt, (lrgX+20, titleY+10), cFont, (cWid*fctr)-40)
             size = cFont2.size(preface + str(roll))
@@ -161,15 +162,6 @@ class Card(Component):            #Class for cards which determine player moveme
         else:
             self.body = pygame.draw.rect(ground, grey, (self.x+border, self.y+border, cWid-(border*2), cHei-(border*2)))
             ground.blit(cardBackImg, (self.x, self.y))
-
-    def txtCat(self):
-        pTile = plyrs[turn].tilePos
-        if pTile >= 1 and pTile <= 4: return 0
-        if pTile >= 5 and pTile <= 8: return 1
-        if pTile >= 9 and pTile <= 12: return 2
-        if pTile >= 13 and pTile <= 16: return 3
-        if pTile >= 17 and pTile <= 20: return 4
-        return -1
         
     def enlargeCoords(self, f = 1):
         if self.y < windHei/2:
@@ -184,14 +176,25 @@ class Card(Component):            #Class for cards which determine player moveme
         
         return (lrgX, lrgY)
 
-def initGraphics(highest = 0):  #'highest' = the highest graphics-number (e.g. if num = 30, will look up to qImg30.png)
+def initGraphics(path, highest = 1):  #'highest' = the highest graphics-number (e.g. if num = 30, will look up to qImg30.png)
     gs = []
     for i in range(highest):
-        if (os.path.isfile("graphics/qImg" + str(i+1) + ".png")):   #if checks if there is an image with given index number
-            gs.append(pygame.image.load(("graphics/qImg" + str(i+1) + ".png")).convert())
-            if (gs[i].get_width() > windWid-(gap*2)): gs[i] = pygame.transform.scale(gs[i], (windWid-(gap*2), int(gs[i].get_height()*((windWid-(gap*2))/gs[i].get_width()))))
-            if (gs[i].get_height() > windHei-(gap*2)): gs[i] = pygame.transform.scale(gs[i], (int(gs[i].get_width()*((windHei-(gap*2))/gs[i].get_height())), windHei-(gap*2)))
-    return gs
+        if (os.path.isfile(path + "Picture" + str(i+1) + ".png")):   #if checks if there is an image with given index number
+            gs.append(pygame.image.load((path + "Picture" + str(i+1) + ".png")).convert())
+            if (gs[i].get_width() > windWid-(picGap)): gs[i] = pygame.transform.scale(gs[i], (windWid-picGap, int(gs[i].get_height()*((windWid-picGap)/gs[i].get_width()))))
+            if (gs[i].get_height() > windHei-(picGap)): gs[i] = pygame.transform.scale(gs[i], (int(gs[i].get_width()*((windHei-picGap)/gs[i].get_height())), windHei-picGap))
+    print("length of graphics: " + str(len(gs)))
+    if len(gs) == 1: return gs[0]               #if there's only 1 picture, just return that
+    else: return gs                              #else, return the array
+
+def tileCat():
+    pTile = plyrs[turn].tilePos
+    if pTile >= 1 and pTile <= 4: return 0
+    if pTile >= 5 and pTile <= 8: return 1
+    if pTile >= 9 and pTile <= 12: return 2
+    if pTile >= 13 and pTile <= 16: return 3
+    if pTile >= 17 and pTile <= 20: return 4
+    return -1
 
 def showParagr(txt, pos, font, widLimit, color=black, alpha=None):  #method for handling and printing multi-line text to the screen
     words = [word.split(" ") for word in txt.splitlines()]
@@ -237,7 +240,8 @@ def initTxt(path):              #loads text files into String array and returns 
     for line in file:
         txt.append(line)
     #print(len(txt))
-    return txt
+    if len(txt) == 1: return txt[0]
+    else: return txt
 
 def initCards():                #initialises cards, places evenly spaced-apart
     cs = []
@@ -314,7 +318,8 @@ def ammendCollisions(plyr):     #moves player avatars if 2+ are on the same tile
         while p.id != plyr.id and p.tilePos == plyr.tilePos and p.tilePlac == plyr.tilePlac:
             if numPlyrs == 4: plyr.x += (avRad*2) - 8   #squashes avatars together more if 4 players (to fit on 1 tile)
             else: plyr.x += (avRad*2) + 5
-            plyr.tilePlac += 1            
+            plyr.tilePlac += 1
+        print(str(p.id+1) + " tile: " + str(p.tilePos) + " place: " + str(p.tilePlac))
 
 def initPlyrs(num = 1):         #initialises player avatars
     ps = []
@@ -351,31 +356,32 @@ def gameLoopUpdate():           #called every iteration while the game is runnin
     pygame.display.update()
     clock.tick(30)
     
-def showQuote(tileNum):         #tileNum only used to determine whether or not first square
+def showQuote(tileNum):
     print(tileNum)
     global firstQuote
+    cat = tileCat()
+    print(cat)
     if firstQuote:
-        print("first")
-        qNum = 0     #dont show quote on first tile
+        slide = "first"
         firstQuote = False
-    elif tileNum == 20: qNum = 1
-    else: qNum = random.randint(2, len(qAll)-1)
-    print(qNum)
-    isImg = qNum > len(qTxt)-1
+    elif tileNum == 20: slide = endSlide
+    else:
+        print("length: " + str(len(quoteSlides[cat])-1))
+        slide = quoteSlides[cat][random.randint(1, len(quoteSlides[cat])-1)]
     viewQuote = True
     sTime = pygame.time.get_ticks()     #takes a start time to work out how long quote has been shown for
     alpha = 0
     while (viewQuote):        
         if (alpha < 240):
             blackImg.set_alpha(alpha)
-            if isImg: qAll[qNum].set_alpha(alpha)
+            if (slide != "first"): slide.set_alpha(alpha)
             alpha = alpha+10
             
         ground.blit(bgImg,(0,0))                            #draws background and avatars in background for underlay
         for p in range(len(plyrs)): plyrs[p].drawSelf()
         ground.blit(blackImg,(0,0))
-        if isImg: ground.blit(qAll[qNum], ((windWid/2)-(qAll[qNum].get_width()/2), (windHei/2)-(qAll[qNum].get_height()/2)))
-        else: showParagr(qAll[qNum], (gap, gap), quoteFont, windWid-20, color=white, alpha=alpha)
+        if (slide != "first"): ground.blit(slide, ((windWid/2)-(slide.get_width()/2), (windHei/2)-(slide.get_height()/2)))
+        else: showParagr(fQTxt, (txtGap, txtGap), quoteFont, windWid-(txtGap), color=white, alpha=alpha)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:       #allows user to quit the game
@@ -388,7 +394,7 @@ def showQuote(tileNum):         #tileNum only used to determine whether or not f
         clock.tick(30)
         #if (pygame.time.get_ticks() - sTime > 10000): viewQuote = False    #timeout for display of quote
 
-    if isImg: qAll[qNum].set_alpha(None) #reset image to fully opaque afterwards
+    #quoteSlides[cat][qNum].set_alpha(None) #reset image to fully opaque afterwards
 
 tiles = initTiles()
 cards = initCards()
@@ -408,15 +414,12 @@ neuTxts = []
 for i in range(5):
     neuTxts.append(initTxt("txts/neutrals/neutrals" + str(i+1) + ".txt"))
     
-qTxt = initTxt("txts/quotes.txt")
-print("num of quotes: " + str((len(qTxt))))
+quoteSlides = []
+for i in range(5):
+    quoteSlides.append(initGraphics("graphics/slides/category" + str(i+1) + "/", 20))
 
-qImgs = initGraphics(30);
-print("num of imgs: " + str((len(qImgs))))
-
-qAll = qTxt + qImgs
-print("num in tot: " + str((len(qAll))))
-
+fQTxt = initTxt("txts/firstQuote.txt")
+endSlide = initGraphics("graphics/slides/end/")
 
 run = True
 choosing = False
@@ -429,6 +432,7 @@ while run:           #runs code from top everytime a new game begins (after a pl
     turn = -1
     nextTurn = True
     firstQuote = True
+    pygame.event.clear()
     while mainMenu:
 
         instructs.changeText("Welcome to Flood Snakes and Ladders!", "Selected number of players:")
@@ -460,8 +464,6 @@ while run:           #runs code from top everytime a new game begins (after a pl
             turn += 1
             if turn >= len(plyrs): turn = 0 #resets turn counter, allows loops around plyrs
             newRandCard = True
-            #negTxtI = random.randint(0, len(negTxts[0])-1)
-            #posTxtI = random.randint(0, len(posTxts[0])-1)
             rollDie()
             nextTurn = False
 
@@ -479,7 +481,7 @@ while run:           #runs code from top everytime a new game begins (after a pl
                     showQuote(plyrs[turn].tilePos)
                     winner = turn+1
                     gameLoop = False
-                    timeout = pygame.time.get_ticks()
+                    endScreenStart = pygame.time.get_ticks()
 
         if avSelected:
             instructs.show = False
@@ -490,7 +492,7 @@ while run:           #runs code from top everytime a new game begins (after a pl
 
     instructs.changeText("Player " + str(winner) + " wins!", "Congradulations") #end game
     instructs.changePos(40, 40)
-    while pygame.time.get_ticks() - timeout < 3000:
+    while pygame.time.get_ticks() - endScreenStart < 3000:
         gameLoopUpdate()
 
 pygame.quit()
