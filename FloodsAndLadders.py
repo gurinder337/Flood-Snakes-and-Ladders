@@ -41,7 +41,7 @@ picGap = 5          #size of the gap between pictures and the edges of the windo
 txtGap = 30
 
 minRoll = -2        #the minimum and maximum die roll
-maxRoll = 10
+maxRoll = 5
 minPosRoll = 3      #the minimum required for roll to be considered positive
 newRandCard = True
 cardI = 0
