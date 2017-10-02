@@ -25,6 +25,8 @@ avFont = pygame.font.SysFont("Ariel", 45)
 
 clock = pygame.time.Clock()
 
+#ground = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+#windWid, windHei = pygame.display.get_surface().get_size()
 windWid = 800
 windHei = 600
 avRad = 25                  #radius of a player avatar
@@ -47,6 +49,7 @@ newRandCard = True
 cardI = 0
 
 ground = pygame.display.set_mode((windWid, windHei))            #background surface
+
 bgImg = pygame.transform.scale(pygame.image.load("graphics/newBG_v4.png"), (windWid, windHei))              #background image
 mmImg = pygame.transform.scale(pygame.image.load("graphics/newBGNoOverlay_v4.png"), (windWid, windHei))     #main menu background image
 blackImg = pygame.transform.scale(pygame.image.load("graphics/blackBg.png"), (windWid, windHei))    #loads and scales an image of the colour black
