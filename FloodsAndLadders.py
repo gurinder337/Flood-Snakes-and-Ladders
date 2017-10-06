@@ -43,10 +43,14 @@ picGap = 5          #size of the gap between pictures and the edges of the windo
 txtGap = 30
 
 minRoll = -2        #the minimum and maximum die roll
-maxRoll = 5
+maxRoll = 7
 minPosRoll = 3      #the minimum required for roll to be considered positive
 newRandCard = True
 cardI = 0
+
+logoWid = 250       #change this value ONLY to change the logo size
+logoFctr = logoWid/1650
+logoHei = 547*logoFctr
 
 ground = pygame.display.set_mode((windWid, windHei))            #background surface
 
@@ -54,6 +58,8 @@ bgImg = pygame.transform.scale(pygame.image.load("graphics/newBG_v4.png"), (wind
 mmImg = pygame.transform.scale(pygame.image.load("graphics/newBGNoOverlay_v4.png"), (windWid, windHei))     #main menu background image
 blackImg = pygame.transform.scale(pygame.image.load("graphics/blackBg.png"), (windWid, windHei))    #loads and scales an image of the colour black
 cardBackImg = pygame.transform.scale(pygame.image.load("graphics/cardBack.jpg"), (cWid, cHei))      #loads and scales the card back image
+logo = pygame.transform.scale(pygame.image.load("graphics/CUIDARwave.jpg"), (logoWid, int(logoHei)))
+
 
 pygame.display.set_caption("Flood Snakes and Ladders")
 
@@ -440,6 +446,7 @@ while run:           #runs code from top everytime a new game begins (after a pl
 
         instructs.changeText("Welcome to Flood Snakes and Ladders!", "Selected number of players:")
         ground.blit(mmImg,(0,0))
+        ground.blit(logo,((windWid-(logoWid+20)),(windHei-(logoHei+20))))
         instructs.drawSelf()
         for o in range(len(plyrNumOpts)):
             plyrNumOpts[o].drawSelf()
