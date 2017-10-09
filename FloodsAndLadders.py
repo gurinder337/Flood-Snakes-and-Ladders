@@ -244,7 +244,7 @@ def initTiles():
     return ts
 
 def initTxt(path):              #loads text files into String array and returns it
-    file = open(path, "r")
+    file = open(path, "r", errors='ignore')
     txt = []
     for line in file:
         txt.append(line)
