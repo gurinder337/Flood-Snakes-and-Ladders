@@ -1,6 +1,7 @@
 import pygame
 import random
 import os.path
+import json
 
 white = (255, 255, 255)
 black = (0, 0, 0)
@@ -60,6 +61,11 @@ blackImg = pygame.transform.scale(pygame.image.load("graphics/blackBg.png"), (wi
 cardBackImg = pygame.transform.scale(pygame.image.load("graphics/cardBack.jpg"), (cWid, cHei))      #loads and scales the card back image
 logo = pygame.transform.scale(pygame.image.load("graphics/CUIDARwave.jpg"), (logoWid, int(logoHei)))
 
+file = open("jsonTxts.json"
+            , "r")
+txtJson = file.read()
+file.close()
+txtDict = json.loads(txtJson)
 
 pygame.display.set_caption("Flood Snakes and Ladders")
 
@@ -243,15 +249,6 @@ def initTiles():
     ts = swapTiles(ts, 13, 14)
     return ts
 
-def initTxt(path):              #loads text files into String array and returns it
-    file = open(path, "r")
-    txt = []
-    for line in file:
-        txt.append(line)
-    #print(len(txt))
-    if len(txt) == 1: return txt[0]
-    else: return txt
-
 def initCards():                #initialises cards, places evenly spaced-apart
     cs = []
     cNum = 0
@@ -410,24 +407,24 @@ cards = initCards()
 instructs = Instructions(50, 50)
 plyrNumOpts = initPlyrNumOpts()
 
-catTitles = initTxt("txts/catTitles.txt")
+catTitles = txtDict["catTitles"]
 negTxts = []
 for i in range(5):
-    negTxts.append(initTxt("txts/negatives/negatives" + str(i+1) + ".txt"))
+    negTxts.append(txtDict["negatives" + str(i+1)])
 
 posTxts = []
 for i in range(5):
-    posTxts.append(initTxt("txts/positives/positives" + str(i+1) + ".txt"))
+    posTxts.append(txtDict["positives" + str(i+1)])
 
 neuTxts = []
 for i in range(5):
-    neuTxts.append(initTxt("txts/neutrals/neutrals" + str(i+1) + ".txt"))
+    neuTxts.append(txtDict["neutrals" + str(i+1)])
     
 quoteSlides = []
 for i in range(5):
     quoteSlides.append(initGraphics("graphics/slides/category" + str(i+1) + "/", 20))
 
-fQTxt = initTxt("txts/firstQuote.txt")
+fQTxt = txtDict["firstQuote"]
 endSlide = initGraphics("graphics/slides/end/")
 
 run = True

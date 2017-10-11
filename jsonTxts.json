@@ -1,0 +1,129 @@
+{
+	"firstQuote": "Everything you see here has come from research material gathered with children, young people (and a few adults) who were directly affected by flooding in England. These are their words, pictures and models..",
+	
+	"catTitles": [
+		"Row 1: About the downpour..",
+		"Row 2: The day after the flood..",
+		"Row 3: Talking about recovery",
+		"Row 4: Talking about next time..",
+		"Row 5: Looking to the future.."
+	],
+	
+	"negatives1": [
+		"Everyone said it'd be ok, but now the water's up to the front step.",
+		"The puddle outside your house gets bigger and bigger and bigger...",
+		"You didn't take notice of the flood warnings so you didn't move your stuff higher.",
+		"You live in a flood risk area and you didn't have a flood plan?"
+	],
+	
+	"negatives2": [
+		"Nobody seems to know what to do, it's chaos.",
+		"Dad is upset, his old family photos are ruined.",
+		"Your family realises you have no insurance.",
+		"Bad luck, you live in a ground floor flat and must leave now!",
+		"The lights have gone out - power failure!"
+	],
+	
+	"negatives3": [
+		"In the end you had to leave your house - it was damp and smelly.",
+		"You, your brother and sister, all have to squash into one hotel room - no space!",
+		"You move to a rented house in a different place and you start to lose touch with your friends.",
+		"You've moved once already and now your landlord says you have to move AGAIN!"
+	],
+	
+	"negatives4": [
+		"It won't happen again, so there's no need to bother with a flood plan.",
+		"It was a ‘once in a lifetime', so there's no need for an emergency bag anymore.",
+		"You've started to worry every time it rains heavily.",
+		"You're worried about it flooding again but you don't know who to talk to."
+	],
+	
+	"negatives5": [
+		"Oh no, you kept putting off making your flood plan and then clean forgot!",
+		"You never bothered to learn what the flood warnings mean and now look where this has got you!",
+		"Rubbish - a special assembly to talk about flooding got cancelled because the teacher that was interested left the school.",
+		"Your head teacher decides the school can't afford to provide training for your teachers about how children are affected by flooding.",
+		"Oh no, nobody told you or your friends the support group was meeting so you missed it!",
+		"Oh dear, your insurance company put everything back where it was because that was the cheapest choice!",
+		"Oh dear, you chose the builder who put everything back where it was because their plan was the quickest."  
+	],
+
+	"neutrals1": [
+		"You heard the weather forecast - rubbish!",
+		"It's always raining anyway, no big deal?",
+		"Football's cancelled, dull day ahead.",
+		"Texting your mates about the rising water."
+	],
+	
+	"neutrals2": [
+		"You wonder what you can do to help..",
+		"You see a man in a boat floating down your street.",
+		"Sludge, everywhere in the street!",
+		"Your friend texts to find out if you still have electricity.",
+		"You manage to move the tv upstairs just in time."
+	],
+	
+	"neutrals3": [
+		"You go to stay with relatives and have to ‘double up' with your cousin.",
+		"Your old street is full of skips, houses being stripped out.",
+		"Builders are making slow progress on your home repairs.",
+		"The ‘drying certificate' arrives, does this mean we might go home soon?"
+	],
+	
+	"neutrals4": [
+		"You think it's all over now and you can get back to normal.",
+		"They're building flood defences here so you think you'll be alright in the future."	
+	],
+	
+	"neutrals5": [
+		"Well done, you listened to the children and your family made a flood plan..",
+		"Congratulations, you signed up for the EA flood warnings.",
+		"At school you and your friends built a model of a river in a box!",
+		"Great, your teachers received training about flooding and what it's like for families to go through the hard work of recovery.",
+		"Good news - your school makes a plan which includes finding out which children have been flooded so they can join support groups.",
+		"Break through - your insurance company visits and gives you and your sister a flood pack they've made for children.",
+		"Great, you've persuaded your aunt to join the local Flood Action Group which is looking at building plans in your area."
+	],
+
+	"positives1": [
+		"You listened to the weather forecast and heard the flood warning.",
+		"You noticed it was raining hard so you checked the weather forecast.",
+		"You started to move furniture upstairs.",
+		"You charged up your phone so you could keep up to date."
+	],
+	
+	"positives2": [
+		"Great, you had your emergency bag packed in case you had to leave in a hurry.",
+		"You had a plan for looking after your pets in the flood.",
+		"You went to help your elderly neighbour move some things upstairs.",
+		"You remember that flood water is not safe to play in.",
+		"Your mum remembered to move your insurance papers upstairs.",
+		"You join others at the community centre to help give out hot drinks."
+	],
+	
+	"positives3": [
+		"You live with your grandparents, it's meant you feel closer to them.",
+		"You find out your home is going to be restored; you'll get a new bedroom!",
+		"You went back to your street today, looks like it's coming back to life.",
+		"Your insurance company visits and offers you two rented homes - one is nearby and handy for school!"
+	],
+	
+	"positives4": [
+		"The builder suggests putting the electric plugs higher in case it floods again.",
+		"We're flood proofing our house! Rugs instead of carpets!",
+		"You show your mum the Environment Agency website and how to sign up for flood warnings.",
+		"A local flood action group is set up in your area and they've invited young people to join."
+	],
+	
+	"positives5": [
+		"Well done, you listened to the children and your family made a flood plan..",
+		"Congratulations, you signed up for the EA flood warnings.",
+		"At school you and your friends built a model of a river in a box!",
+		"Great, your teachers received training about flooding and what it's like for families to go through the hard work of recovery.",
+		"Good news - your school makes a plan which includes finding out which children have been flooded so they can join support groups.",
+		"Break through - your insurance company visits and gives you and your sister a flood pack they've made for children.",
+		"Great, you've persuaded your aunt to join the local Flood Action Group which is looking at building plans in your area."  
+	]
+	
+}	
+
