@@ -30,8 +30,8 @@ pygame.font.init()
 
 
 #Liz - change the numbers below to change the size of the fonts
-topTxtSize = 70                                         #The top layer of the instruction text
-botTxtSize = 30                                         #The bottom layer of the instruction text
+topTxtSize = 30                                         #The top layer of the instruction text
+botTxtSize = 15                                         #The bottom layer of the instruction text
 cardTitleSize = 25                                      #The title on the cards
 cardTxtSize = 35                                        #The text on the cards
 cardNumSize = 60                                        #The numbers on the cards
@@ -69,8 +69,9 @@ tHei = windHei/tilesVert    #i.e. 120
 cWid = 240          #width of the cards
 cHei = 160          #height of the cards
 
-bWid = 300
-bHei = 200
+#Liz - change the 2 numbers below to change the width and height of the buttons to select player number (ratio don't matter much here)
+bWid = 175
+bHei = 100
 
 border = 2          #size of the border surronding cards, instructions, buttons
 picGap = 5          #size of the gap between pictures and the edges of the window
@@ -89,7 +90,7 @@ logoHei = 547*logoFctr
 ground = pygame.display.set_mode((windWid, windHei))            #background surface
 
 bgImg = pygame.transform.scale(pygame.image.load("graphics/newBG_v4.png"), (windWid, windHei))              #background image
-mmImg = pygame.transform.scale(pygame.image.load("graphics/newBGNoOverlay_v4.png"), (windWid, windHei))     #main menu background image
+mmImg = pygame.transform.scale(pygame.image.load("graphics/bgNoOverlay.png"), (windWid, windHei))     #main menu background image
 blackImg = pygame.transform.scale(pygame.image.load("graphics/blackBg.png"), (windWid, windHei))    #loads and scales an image of the colour black
 cardBackImg = pygame.transform.scale(pygame.image.load("graphics/cardBack.jpg"), (cWid, cHei))      #loads and scales the card back image
 logo = pygame.transform.scale(pygame.image.load("graphics/CUIDARwave.jpg"), (logoWid, int(logoHei)))
@@ -390,10 +391,10 @@ def initPlyrs(num = 1):         #initialises player avatars
 def initPlyrNumOpts():          #initialises player number options
     opts = []
     width = bWid*3
-    widRemain = windWid - width
+    widRemain = (windWid*.67) - width
     widGaps = widRemain/4
     for o in xrange(3):
-        opts.append(Button(o, widGaps+(o*(widGaps+bWid)), (windWid-bWid-(windWid/4))))
+        opts.append(Button(o, (windWid*.33)+widGaps+(o*(widGaps+bWid)), (windHei-bHei-(windHei/4))))
         opts[o].changeTxt(unicode(o+2))
     return opts
 
