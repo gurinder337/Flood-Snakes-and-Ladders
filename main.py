@@ -21,20 +21,33 @@ green = (0, 255, 0)
 blue = (0, 0, 255)
 grey = (224, 224, 224)
 
-avCols = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255,255,0)]       #colours for the player avatars
 
+#Liz - the values belows are the RGBs for each of the 4 playar avatars
+avCols = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255,255,0)]
 
 pygame.init()
 pygame.font.init()
-txtFont = pygame.font.Font("DejaVuSans.ttf", 30)                        #fonts used throughout the game
-txtFont2 = pygame.font.Font("DejaVuSans.ttf", 15)
-cTFont = pygame.font.Font("DejaVuSans.ttf", 25)
+
+
+#Liz - change the numbers below to change the size of the fonts
+topTxtSize = 70                                         #The top layer of the instruction text
+botTxtSize = 30                                         #The bottom layer of the instruction text
+cardTitleSize = 25                                      #The title on the cards
+cardTxtSize = 35                                        #The text on the cards
+cardNumSize = 60                                        #The numbers on the cards
+butNumSize = 100                                        #The numbers on the buttons
+introTxtSize = 50                                       #The text that displays at the beginning of a new game
+avTxtSize = 45                                          #The text on the avatars
+
+txtFont = pygame.font.Font("DejaVuSans.ttf", topTxtSize) 
+txtFont2 = pygame.font.Font("DejaVuSans.ttf", botTxtSize)
+cTFont = pygame.font.Font("DejaVuSans.ttf", cardTitleSize)
 cTFont.set_bold(True)
-cFont = pygame.font.Font("DejaVuSans.ttf", 35)
-cFont2 = pygame.font.Font("DejaVuSans.ttf", 60)
-bFont = pygame.font.Font("DejaVuSans.ttf", 100)
-quoteFont = pygame.font.Font("DejaVuSans.ttf", 50)
-avFont = pygame.font.Font("DejaVuSans.ttf", 45)
+cFont = pygame.font.Font("DejaVuSans.ttf", cardTxtSize)
+cFont2 = pygame.font.Font("DejaVuSans.ttf", cardNumSize)
+bFont = pygame.font.Font("DejaVuSans.ttf", butNumSize)
+quoteFont = pygame.font.Font("DejaVuSans.ttf", introTxtSize)
+avFont = pygame.font.Font("DejaVuSans.ttf", avTxtSize)
 
 
 clock = pygame.time.Clock()
@@ -45,15 +58,20 @@ txtJson="{\"firstQuote\":\"Everything you see here has come from research materi
 #this is size fo the tablet minus a little on y axis for menu bar.
 windWid = 1024
 windHei = 730
-avRad = 25                  #radius of a player avatar
+avRad = 40                  #Liz - this value is the radius of a player avatar (bigger -> larger circle
 numTiles = 20
 tilesHori = 4               #number of tiles in length
 tilesVert = 5               #number of tiles in height
 tWid = windWid/tilesHori    #i.e. 200
 tHei = windHei/tilesVert    #i.e. 120
 
+#Liz - change the 2 numbers below to change the width and height of the cards (stick to a 6:4 ratio as this is the ratio of the card image, e.g. 960x640)
 cWid = 240          #width of the cards
 cHei = 160          #height of the cards
+
+bWid = 300
+bHei = 200
+
 border = 2          #size of the border surronding cards, instructions, buttons
 picGap = 5          #size of the gap between pictures and the edges of the window
 txtGap = 30
@@ -116,13 +134,14 @@ class Avatar(Component):             #Class for player character avatars
 class Button(Component):            #Class for buttons that appear on the main menu
     def __init__(self, id, x, y):
         super(Button, self).__init__(id, x, y)
-        self.txtSurf = txtFont.render("<None>", False, black)
+        self.txtSurf = bFont.render(unicode(id+1), False, black)
+        self.txtSize = bFont.size(unicode(self.id))
         #print("button: " + str(id) + " alive")
 
-    def drawSelf(self):
-        pygame.draw.rect(ground, black,(int(self.x-border), int(self.y-border), cWid+(border*2), cHei+(border*2))) #Draws a rect slighter bigger first (the border)
-        self.body = pygame.draw.rect(ground, avCols[self.id+1],(int(self.x), int(self.y), cWid, cHei))
-        ground.blit(self.txtSurf, (self.x+100, self.y+25))
+    def drawSelf(self): 
+        pygame.draw.rect(ground, black,(int(self.x-border), int(self.y-border), bWid+(border*2), bHei+(border*2))) #Draws a rect slighter bigger first (the border)
+        self.body = pygame.draw.rect(ground, avCols[self.id+1],(int(self.x), int(self.y), bWid, bHei))
+        ground.blit(self.txtSurf, (self.x+(bWid/2)-(self.txtSize[0]/2), self.y+(bHei/2)-(self.txtSize[1]/2)))
 
     def changeTxt(self, t):
         self.txtSurf = bFont.render(t, False, black)
@@ -136,10 +155,10 @@ class Instructions(Component):
 
     def drawSelf(self):
         if self.show:   #checks if instructions should be shown first
-            pygame.draw.rect(ground, black, (self.x-5-border, self.y-border, (border*2)+max(self.mainSurf.get_rect().width, self.subSurf.get_rect().width)+10, (border*2)+self.subSurf.get_rect().height+45))
-            self.body = pygame.draw.rect(ground, white, (self.x-5, self.y, max(self.mainSurf.get_rect().width, self.subSurf.get_rect().width)+10, self.subSurf.get_rect().height+45))
+            pygame.draw.rect(ground, black, (self.x-5-border, self.y-border, (border*2)+max(self.mainSurf.get_rect().width, self.subSurf.get_rect().width)+10, (border*2)+self.subSurf.get_rect().height+topTxtSize+15))
+            self.body = pygame.draw.rect(ground, white, (self.x-5, self.y, max(self.mainSurf.get_rect().width, self.subSurf.get_rect().width)+10, self.subSurf.get_rect().height+topTxtSize+15))
             ground.blit(self.mainSurf, (self.x, self.y))
-            ground.blit(self.subSurf, (self.x, self.y+40))
+            ground.blit(self.subSurf, (self.x, self.y+topTxtSize+10))
 
     def changeText(self, main = None, sub = ""):
         if main != None: self.mainSurf = txtFont.render(main, False, black)
@@ -212,8 +231,8 @@ def initGraphics(path, highest = 1):  #'highest' = the highest graphics-number (
     for i in xrange(highest):
         if (os.path.isfile(path + "Picture" + unicode(i+1) + ".png")):   #if checks if there is an image with given index number
             gs.append(pygame.image.load((path + "Picture" + unicode(i+1) + ".png")).convert())
-            if (gs[i].get_width() > windWid-(picGap)): gs[i] = pygame.transform.scale(gs[i], (windWid-picGap, int(gs[i].get_height()*((windWid-picGap)/gs[i].get_width()))))
-            if (gs[i].get_height() > windHei-(picGap)): gs[i] = pygame.transform.scale(gs[i], (int(gs[i].get_width()*((windHei-picGap)/gs[i].get_height())), windHei-picGap))
+            #if (gs[i].get_width() > windWid-(picGap)): gs[i] = pygame.transform.scale(gs[i], (windWid-picGap, int(gs[i].get_height()*((windWid-picGap)/gs[i].get_width()))))
+            #if (gs[i].get_height() > windHei-(picGap)): gs[i] = pygame.transform.scale(gs[i], (int(gs[i].get_width()*((windHei-picGap)/gs[i].get_height())), windHei-picGap))
     print "length of graphics: " + unicode(len(gs))
     if len(gs) == 1: return gs[0]               #if there's only 1 picture, just return that
     else: return gs                              #else, return the array
@@ -355,28 +374,26 @@ def ammendCollisions(plyr):     #moves player avatars if 2+ are on the same tile
     plyr.tilePlac = 1   #reset as they would have just landed therefore Plac = 1
     for p in plyrs:
         while p.id != plyr.id and p.tilePos == plyr.tilePos and p.tilePlac == plyr.tilePlac:
-            if numPlyrs == 4: plyr.x += (avRad*2) - 8   #squashes avatars together more if 4 players (to fit on 1 tile)
-            else: plyr.x += (avRad*2) + 5
+            plyr.x += (avRad*2)   #squashes avatars together more if 4 players (to fit on 1 tile)
             plyr.tilePlac += 1
         print unicode(p.id+1) + " tile: " + unicode(p.tilePos) + " place: " + unicode(p.tilePlac)
 
 def initPlyrs(num = 1):         #initialises player avatars
     ps = []
-    pX = tiles[0].x + avRad*2 - 10
-    pY = tiles[0].y + avRad*2
+    pX = tiles[0].x + avRad*1.5
+    pY = tiles[0].y + avRad*1.5
     for p in xrange(num):
         ps.append(Avatar(p, pX, pY, 1))         #tilePos taken as param is tile[index] +1
-        if numPlyrs == 4: pX += (avRad*2) - 8   #squashes avatars together more if 4 players (to fit on 1 tile)
-        else: pX += (avRad*2) + 5
+        pX += (avRad*2)   #squashes avatars together more if 4 players (to fit on 1 tile)
     return ps
 
 def initPlyrNumOpts():          #initialises player number options
     opts = []
-    width = cWid*3
+    width = bWid*3
     widRemain = windWid - width
     widGaps = widRemain/4
     for o in xrange(3):
-        opts.append(Button(o, widGaps+(o*(widGaps+cWid)), 150))
+        opts.append(Button(o, widGaps+(o*(widGaps+bWid)), (windWid-bWid-(windWid/4))))
         opts[o].changeTxt(unicode(o+2))
     return opts
 
@@ -409,7 +426,7 @@ def showQuote(tileNum):
         slide = quoteSlides[cat][random.randint(1, len(quoteSlides[cat])-1)]
     viewQuote = True
     sTime = pygame.time.get_ticks()     #takes a start time to work out how long quote has been shown for
-    alpha = 0
+    alpha = 240
     while (viewQuote):        
         if (alpha < 240):
             blackImg.set_alpha(alpha)
@@ -419,7 +436,9 @@ def showQuote(tileNum):
         ground.blit(bgImg,(0,0))                            #draws background and avatars in background for underlay
         for p in xrange(len(plyrs)): plyrs[p].drawSelf()
         ground.blit(blackImg,(0,0))
-        if (slide != "first"): ground.blit(slide, ((windWid/2)-(slide.get_width()/2), (windHei/2)-(slide.get_height()/2)))
+        if (slide != "first"):
+            print(slide)
+            ground.blit(slide, ((windWid/2)-(slide.get_width()/2), (windHei/2)-(slide.get_height()/2)))
         else: showParagr(fQTxt, (txtGap, txtGap), quoteFont, windWid-(txtGap), color=white, alpha=alpha)
         
         for event in pygame.event.get():
@@ -477,7 +496,8 @@ while run:           #runs code from top everytime a new game begins (after a pl
         instructs.changeText("Welcome to Flood Snakes and Ladders!", "Selected number of players:")
         ground.blit(mmImg,(0,0))
         ground.blit(logo,((windWid-(logoWid+20)),(windHei-(logoHei+20))))
-        instructs.drawSelf()
+        #below taken out due to being replaced by new main menu background image
+        #instructs.drawSelf()
         for o in xrange(len(plyrNumOpts)):
             plyrNumOpts[o].drawSelf()
             
@@ -512,7 +532,8 @@ while run:           #runs code from top everytime a new game begins (after a pl
                 pygame.quit()
                 quit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if plyrs[turn].body.collidepoint(pygame.mouse.get_pos()):
+                #below taken out to avoid players need to click specifically on their avatar
+                #if plyrs[turn].body.collidepoint(pygame.mouse.get_pos()):
                     avSelected = True
             elif event.type == pygame.MOUSEBUTTONUP:
                 if avSelected: evalPlyrMove(plyrs[turn])    #if plyr lets go, evaluate their move
